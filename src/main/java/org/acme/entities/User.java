@@ -1,5 +1,7 @@
 package org.acme.entities;
 
+import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -9,7 +11,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User extends PanacheEntityBase {
     @Id
     @GeneratedValue
     @Column(name = "user_id", columnDefinition = "UUID")
@@ -40,9 +42,8 @@ public class User {
     
     public User() {}
     
-    public User(String username, String email, String hashedPassword) {
+    public User(String username, String hashedPassword) {
         this.username = username;
-        this.email = email;
         this.hashedPassword = hashedPassword;
     }
     

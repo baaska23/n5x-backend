@@ -1,23 +1,44 @@
 package org.acme.resources;
 
+import io.quarkus.security.Authenticated;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
-import org.acme.entities.Profile;
-import org.acme.repositories.ProfileRepository;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-@Path("/api/profiles")
+@Path("/api/profile")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Authenticated
 public class ProfileResource {
     
     @Inject
-    ProfileRepository profileRepository;
+    JsonWebToken jwt;
     
     @GET
-    public List<Profile> getAll() {
-        return profileRepository.listAll();
+    @Path("/me")
+    @RolesAllowed("User")
+    public Response getCurrentUser(@Context SecurityContext ctx) {
+        Map<String, Object> userInfo = new HashMap<>();
+        userInfo.put("username", jwt.getName());
+        userInfo.put("userId", jwt.getSubject());
+        userInfo.put("email", jwt.getClaim("email"));
+        userInfo.put("groups", jwt.getGroups());
+        
+        return Response.ok(userInfo).build();
+    }
+    
+    @GET
+    @Path("/protected")
+    @RolesAllowed("User")
+    public Response protectedEndpoint() {
+        return Response.ok("This is a protected endpoint accessible only with valid JWT").build();
     }
 }
