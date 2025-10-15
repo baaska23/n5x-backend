@@ -1,6 +1,5 @@
 package org.acme.entities;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 
@@ -16,9 +15,6 @@ public class User extends PanacheEntityBase {
     @GeneratedValue
     @Column(name = "user_id", columnDefinition = "UUID")
     private UUID userId;
-    
-    @Column(nullable = false, unique = true)
-    private String email;
     
     private String username;
     
@@ -53,14 +49,6 @@ public class User extends PanacheEntityBase {
     
     public void setUserId(UUID userId) {
         this.userId = userId;
-    }
-    
-    public String getEmail() {
-        return email;
-    }
-    
-    public void setEmail(String email) {
-        this.email = email;
     }
     
     public String getUsername() {

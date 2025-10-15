@@ -38,12 +38,6 @@ public class AuthResource {
                     .build();
         }
         
-        if (request.getEmail() == null || request.getEmail().trim().isEmpty()) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(new ErrorResponse("Email is required"))
-                    .build();
-        }
-        
         if (request.getPassword() == null || request.getPassword().length() < 6) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(new ErrorResponse("Password must be at least 6 characters"))
@@ -56,16 +50,9 @@ public class AuthResource {
                     .build();
         }
         
-        if (userService.emailExists(request.getEmail())) {
-            return Response.status(Response.Status.CONFLICT)
-                    .entity(new ErrorResponse("Email already exists"))
-                    .build();
-        }
-        
         try {
             User user = userService.createUser(
                     request.getUsername(),
-                    request.getEmail(),
                     request.getPassword()
             );
             
@@ -75,8 +62,7 @@ public class AuthResource {
             AuthResponse response = new AuthResponse(
                     token,
                     refreshToken,
-                    user.getUsername(),
-                    user.getEmail()
+                    user.getUsername()
             );
             
             return Response.status(Response.Status.CREATED).entity(response).build();
@@ -122,8 +108,7 @@ public class AuthResource {
         AuthResponse response = new AuthResponse(
                 token,
                 refreshToken,
-                user.getUsername(),
-                user.getEmail()
+                user.getUsername()
         );
         
         return Response.ok(response).build();

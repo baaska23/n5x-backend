@@ -24,7 +24,7 @@ public class JwtService {
                 .upn(user.getUsername())
                 .subject(user.getUsername().toString())
                 .groups(new HashSet<>(Arrays.asList("User")))
-                .claim("email", user.getEmail())
+                .claim("username", user.getUsername())
                 .expiresIn(duration)
                 .sign();
     }

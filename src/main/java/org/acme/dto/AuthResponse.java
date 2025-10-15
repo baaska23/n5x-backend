@@ -4,15 +4,13 @@ public class AuthResponse {
     private String token;
     private String refreshToken;
     private String username;
-    private String email;
     
     public AuthResponse() {}
     
-    public AuthResponse(String token, String refreshToken, String username, String email) {
+    public AuthResponse(String token, String refreshToken, String username) {
         this.token = token;
         this.refreshToken = refreshToken;
         this.username = username;
-        this.email = email;
     }
     
     public String getToken() {
@@ -37,13 +35,5 @@ public class AuthResponse {
     
     public void setUsername(String username) {
         this.username = username;
-    }
-    
-    public String getEmail() {
-        return email;
-    }
-    
-    public void setEmail(String email) {
-        this.email = email;
     }
 }
