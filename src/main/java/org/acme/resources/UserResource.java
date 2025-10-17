@@ -25,12 +25,14 @@ public class UserResource {
     }
     
     @GET
+    @RolesAllowed("User")
     @Path("/{id}")
     public User getUserById(@PathParam("id") UUID id) {
         return userRepository.findById(id);
     }
     
     @DELETE
+    @RolesAllowed("User")
     @Path("/{id}")
     public boolean deleteUserById(@PathParam("id") UUID id) {
         return userRepository.deleteById(id);

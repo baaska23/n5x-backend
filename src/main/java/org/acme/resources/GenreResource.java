@@ -1,5 +1,6 @@
 package org.acme.resources;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -17,6 +18,7 @@ public class GenreResource {
     GenreRepository genreRepository;
     
     @GET
+    @RolesAllowed("User")
     public List<Genre> getAll() {
         return genreRepository.listAll();
     }

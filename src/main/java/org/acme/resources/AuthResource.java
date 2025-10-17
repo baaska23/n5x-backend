@@ -113,4 +113,11 @@ public class AuthResource {
         
         return Response.ok(response).build();
     }
+    
+    @POST
+    @Path("/logout")
+    @PermitAll
+    public Response logout() {
+        return Response.noContent().build();
+    }
 }
