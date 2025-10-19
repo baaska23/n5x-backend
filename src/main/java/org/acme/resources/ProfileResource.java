@@ -6,19 +6,15 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.acme.dto.LikedContentDto;
 import org.acme.dto.MyListDto;
-import org.acme.entities.Content;
-import org.acme.entities.MyList;
-import org.acme.entities.Profile;
-import org.acme.entities.User;
-import org.acme.repositories.ContentRepository;
-import org.acme.repositories.MyListRepository;
-import org.acme.repositories.ProfileRepository;
-import org.acme.repositories.UserRepository;
+import org.acme.entities.*;
+import org.acme.repositories.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Path("/api/profiles")
 @Produces(MediaType.APPLICATION_JSON)
@@ -36,6 +32,9 @@ public class ProfileResource {
     
     @Inject
     UserRepository userRepository;
+    
+    @Inject
+    LikedContentRepository likedContentRepository;
     
     @GET
     @RolesAllowed("User")
@@ -114,7 +113,7 @@ public class ProfileResource {
                     UUID cid = m.getContent() != null ? m.getContent().getContentId() : null;
                     return new MyListDto(pid, cid, m.getAddedAt());
                 })
-                .collect(java.util.stream.Collectors.toList());
+                .collect(Collectors.toList());
     }
     
     @POST
@@ -123,16 +122,8 @@ public class ProfileResource {
     @Transactional
     public MyListDto addContentToMyList(@PathParam("profileId") UUID profileId, Content incomingContent) {
         Profile profile = profileRepository.findById(profileId);
-        if (profile == null) {
-            throw new NotFoundException("Profile not found");
-        }
-        
         Content content = contentRepository.findById(incomingContent.getContentId());
-        if (content == null) {
-            throw new NotFoundException("Content not found");
-        }
         
-        // Check if the profile already has this content (avoid duplicate PK)
         boolean exists = myListRepository.find("profile = ?1 and content = ?2", profile, content)
                 .firstResultOptional()
                 .isPresent();
@@ -140,11 +131,80 @@ public class ProfileResource {
             throw new WebApplicationException("Content already in my list", Response.Status.CONFLICT);
         }
         
-        // Create a new MyList entity (do not mutate an existing entity's PK)
         MyList myList = new MyList(profile, content);
         myList.setAddedAt(LocalDateTime.now());
         myListRepository.persist(myList);
         
         return new MyListDto(profile.getProfileId(), content.getContentId(), myList.getAddedAt());
+    }
+    
+    @DELETE
+    @RolesAllowed("User")
+    @Path("/{profileId}/{contentId}/my-list")
+    @Transactional
+    public MyListDto removeContent(@PathParam("profileId") UUID profileId, @PathParam("contentId") UUID contentId) {
+        MyList deletingContent = myListRepository.find("profile.profileId = ?1 and content.contentId = ?2", profileId, contentId)
+                .firstResult();
+        if (deletingContent == null) {
+            throw new NotFoundException("Content not found in MyList");
+        }
+        myListRepository.delete(deletingContent);
+        
+        UUID pid = deletingContent.getProfile() != null ? deletingContent.getProfile().getProfileId() : null;
+        UUID cid = deletingContent.getContent() != null ? deletingContent.getContent().getContentId() : null;
+        return new MyListDto(pid, cid, deletingContent.getAddedAt());
+    }
+    
+    @GET
+    @RolesAllowed("User")
+    @Path("/{profileId}/likes")
+    public List<LikedContentDto> getLikedContentById(@PathParam("profileId") UUID profileId) {
+        List<LikedContent> likedContents = likedContentRepository.listByProfileId(profileId);
+        return likedContents.stream()
+                .map(m -> {
+                    UUID pid = m.getProfile().getProfileId();
+                    UUID cid = m.getContent().getContentId();
+                    return new LikedContentDto(pid, cid, m.getCreatedAt());
+                })
+                .collect(Collectors.toList());
+    }
+    
+    @POST
+    @RolesAllowed("User")
+    @Path("/{profileId}/likes")
+    @Transactional
+    public LikedContentDto likeContent(@PathParam("profileId") UUID profileId, Content incomingContent) {
+        Profile profile = profileRepository.findById(profileId);
+        Content content = contentRepository.findById(incomingContent.getContentId());
+        
+        boolean exists = likedContentRepository.find("profile = ?1 and content = ? 2", profile, content)
+                .firstResultOptional()
+                .isPresent();
+        if (exists) {
+            throw new WebApplicationException("Content already in my list", Response.Status.CONFLICT);
+        }
+        
+        LikedContent likedContent = new LikedContent(profile, content);
+        likedContent.setCreatedAt(LocalDateTime.now());
+        likedContentRepository.persist(likedContent);
+        
+        return new LikedContentDto(profile.getProfileId(), content.getContentId(), likedContent.getCreatedAt());
+    }
+    
+    @DELETE
+    @RolesAllowed("User")
+    @Path("/{profileId}/{contentId}/likes")
+    @Transactional
+    public LikedContentDto removeLike(@PathParam("profileId") UUID profileId, @PathParam("contentId") UUID contentId) {
+        LikedContent deletingContent = likedContentRepository.find("profile.profileId = ?1 and content.contentId = ?2", profileId, contentId)
+                .firstResult();
+        if (deletingContent == null) {
+            throw new NotFoundException("Content not found in likes");
+        }
+        
+        likedContentRepository.delete(deletingContent);
+        UUID pid = deletingContent.getProfile().getProfileId();
+        UUID cid = deletingContent.getContent().getContentId();
+        return new LikedContentDto(pid, cid, deletingContent.getCreatedAt());
     }
 }

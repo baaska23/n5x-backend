@@ -7,7 +7,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Embeddable
-public class MyListId implements Serializable {
+public class LikedContentId implements Serializable {
     private static final long serialVersionUID = 1L;
     
     @Column(name = "profile_id", columnDefinition = "UUID", nullable = false)
@@ -16,9 +16,9 @@ public class MyListId implements Serializable {
     @Column(name = "content_id", columnDefinition = "UUID", nullable = false)
     private UUID contentId;
     
-    public MyListId() {}
+    public LikedContentId() {}
     
-    public MyListId(UUID profileId, UUID contentId) {
+    public LikedContentId(UUID profileId, UUID contentId) {
         this.profileId = profileId;
         this.contentId = contentId;
     }
@@ -33,7 +33,7 @@ public class MyListId implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof MyListId)) return false;
-        MyListId that = (MyListId) o;
+        LikedContentId that = (LikedContentId) o;
         return Objects.equals(profileId, that.profileId) &&
                 Objects.equals(contentId, that.contentId);
     }

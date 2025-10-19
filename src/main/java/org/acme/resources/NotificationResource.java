@@ -10,6 +10,7 @@ import org.acme.repositories.NotificationRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Path("/api/notifications")
 @Produces(MediaType.APPLICATION_JSON)
@@ -47,7 +48,7 @@ public class NotificationResource {
     @RolesAllowed("User")
     @Path("/mark-all-read")
     @Transactional
-    public List<Notification> markAsReadAllNotification() {
+    public List<Notification> markAsReadAll() {
         List<Notification> notifications = notificationRepository.listAll();
         
         for (Notification n : notifications) {
@@ -55,5 +56,15 @@ public class NotificationResource {
         }
         
         return notifications;
+    }
+    
+    @PATCH
+    @RolesAllowed("User")
+    @Path("/{id}/read")
+    @Transactional
+    public Notification markAsRead(@PathParam("id") UUID id) {
+        Notification notification = notificationRepository.findById(id);
+        notification.setRead(true);
+        return notification;
     }
 }

@@ -1,4 +1,3 @@
-// java
 package org.acme.entities;
 
 import jakarta.persistence.*;

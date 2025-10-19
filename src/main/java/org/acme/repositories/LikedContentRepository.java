@@ -4,8 +4,16 @@ import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.acme.entities.LikedContent;
 
+import java.util.List;
 import java.util.UUID;
 
 @ApplicationScoped
 public class LikedContentRepository implements PanacheRepositoryBase<LikedContent, UUID> {
+    public LikedContent findByProfileId(UUID profileId) {
+        return find("profile.profileId = ?1", profileId).firstResult();
+    }
+    
+    public List<LikedContent> listByProfileId(UUID profileId) {
+        return list("profile.profileId = ?1",profileId);
+    }
 }

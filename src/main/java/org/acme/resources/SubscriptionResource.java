@@ -26,6 +26,17 @@ public class SubscriptionResource {
         return subscriptionRepository.listAll();
     }
     
+    @GET
+    @RolesAllowed("User")
+    @Path("/{userId}/history")
+    public List<Subscription> getAllByUserId(@PathParam("userId") UUID userId) {
+        List<Subscription> subscriptions = subscriptionRepository.listByUserId(userId);
+        if (subscriptions == null || subscriptions.isEmpty()) {
+            throw new NotFoundException("No subscriptions found for userId: " + userId);
+        }
+        return subscriptions;
+    }
+    
     @POST
     @RolesAllowed("User")
     @Transactional
