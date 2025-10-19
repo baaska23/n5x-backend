@@ -26,7 +26,6 @@ public class MovieResource {
     
     @GET
     @RolesAllowed("User")
-    
     @Path("{id}")
     public Movie getMovieById(@PathParam("id")UUID id) {
         return movieRepository.findById(id);

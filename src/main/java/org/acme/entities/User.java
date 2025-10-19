@@ -2,6 +2,7 @@ package org.acme.entities;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.UUID;
 public class User extends PanacheEntityBase {
     @Id
     @GeneratedValue
+    @UuidGenerator
     @Column(name = "user_id", columnDefinition = "UUID")
     private UUID userId;
     

@@ -5,6 +5,8 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import org.acme.entities.Show;
+import org.acme.entities.Season;
+import org.acme.repositories.SeasonRepository;
 import org.acme.repositories.ShowRepository;
 
 import java.util.List;
@@ -18,6 +20,9 @@ public class ShowResource {
     @Inject
     ShowRepository showRepository;
     
+    @Inject
+    SeasonRepository seasonRepository;
+    
     @GET
     @RolesAllowed("User")
     public List<Show> getAll() {
@@ -29,5 +34,12 @@ public class ShowResource {
     @Path("{id}")
     public Show getShowById(@PathParam("id")UUID id) {
         return showRepository.findById(id);
+    }
+    
+    @GET
+    @RolesAllowed("User")
+    @Path("/{id}/seasons")
+    public List<Season> getSeasonsByShowId(@PathParam("id") UUID id) {
+        return seasonRepository.findByShowId(id);
     }
 }

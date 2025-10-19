@@ -8,5 +8,7 @@ import java.util.UUID;
 
 @ApplicationScoped
 public class ContentRepository implements PanacheRepositoryBase<Content, UUID> {
-
+    public Content findByProfileId(UUID profileId) {
+        return (Content) find("profile.profileId = ?1", profileId);
+    }
 }

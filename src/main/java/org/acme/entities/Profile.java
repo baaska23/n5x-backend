@@ -1,6 +1,7 @@
 package org.acme.entities;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.UUID;
 public class Profile {
     @Id
     @GeneratedValue
+    @UuidGenerator
     @Column(name = "profile_id", columnDefinition = "UUID")
     private UUID profileId;
     
@@ -73,5 +75,21 @@ public class Profile {
     
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+    
+    public List<MyList> getMyList() {
+        return myList;
+    }
+    
+    public void setMyList(List<MyList> myList) {
+        this.myList = myList;
+    }
+    
+    public List<LikedContent> getLikedContents() {
+        return likedContents;
+    }
+    
+    public void setLikedContents(List<LikedContent> likedContents) {
+        this.likedContents = likedContents;
     }
 }

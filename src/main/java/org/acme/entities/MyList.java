@@ -1,24 +1,23 @@
+// java
 package org.acme.entities;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
-@Table(name = "my_list",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"profile_id", "content_id"}))
+@Table(name = "my_list")
 public class MyList {
-    @Id
-    @GeneratedValue
-    @Column(name = "list_id", columnDefinition = "UUID")
-    private UUID listId;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @EmbeddedId
+    private MyListId id;
+    
+    @MapsId("profileId")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "profile_id", nullable = false)
     private Profile profile;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("contentId")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "content_id", nullable = false)
     private Content content;
     
@@ -27,35 +26,29 @@ public class MyList {
     
     public MyList() {}
     
-    public UUID getListId() {
-        return listId;
+    public MyList(Profile profile, Content content) {
+        this.profile = profile;
+        this.content = content;
+        this.id = new MyListId(profile.getProfileId(), content.getContentId());
     }
     
-    public void setListId(UUID listId) {
-        this.listId = listId;
-    }
+    public MyListId getId() { return id; }
+    public void setId(MyListId id) { this.id = id; }
     
-    public Profile getProfile() {
-        return profile;
-    }
-    
+    public Profile getProfile() { return profile; }
     public void setProfile(Profile profile) {
         this.profile = profile;
+        if (this.id == null) this.id = new MyListId();
+        this.id.setProfileId(profile.getProfileId());
     }
     
-    public Content getContent() {
-        return content;
-    }
-    
+    public Content getContent() { return content; }
     public void setContent(Content content) {
         this.content = content;
+        if (this.id == null) this.id = new MyListId();
+        this.id.setContentId(content.getContentId());
     }
     
-    public LocalDateTime getAddedAt() {
-        return addedAt;
-    }
-    
-    public void setAddedAt(LocalDateTime addedAt) {
-        this.addedAt = addedAt;
-    }
+    public LocalDateTime getAddedAt() { return addedAt; }
+    public void setAddedAt(LocalDateTime addedAt) { this.addedAt = addedAt; }
 }
