@@ -6,7 +6,9 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import org.acme.entities.Subscription;
+import org.acme.entities.User;
 import org.acme.repositories.SubscriptionRepository;
+import org.acme.repositories.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,6 +21,8 @@ public class SubscriptionResource {
     
     @Inject
     SubscriptionRepository subscriptionRepository;
+    @Inject
+    UserRepository userRepository;
     
     @GET
     @RolesAllowed("User")
@@ -41,13 +45,17 @@ public class SubscriptionResource {
     @RolesAllowed("User")
     @Transactional
     public Subscription createSubscription(Subscription request) {
-        if (request.getSubscriptionId() == null || request.getUser() == null || request.getDueAt() == null) {
-            throw new BadRequestException("subscription's all fields are required");
+        if (request.getUser() == null || request.getUser().getUserId() == null || request.getDueAt() == null) {
+            throw new BadRequestException("userId and dueAt are required");
+        }
+        
+        User user = userRepository.findById(request.getUser().getUserId());
+        if (user == null) {
+            throw new BadRequestException("User not found");
         }
         
         Subscription newSubscription = new Subscription();
-        newSubscription.setSubscriptionId(UUID.randomUUID());
-        newSubscription.setUser(request.getUser());
+        newSubscription.setUser(user);
         newSubscription.setDueAt(request.getDueAt());
         newSubscription.setCreatedAt(LocalDateTime.now());
         

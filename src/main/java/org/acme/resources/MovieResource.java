@@ -30,4 +30,11 @@ public class MovieResource {
     public Movie getMovieById(@PathParam("id")UUID id) {
         return movieRepository.findById(id);
     }
+    
+    @GET
+    @RolesAllowed("User")
+    @Path("/trending")
+    public List getTrendingMovies(){
+        return movieRepository.findTop10Movies();
+    }
 }

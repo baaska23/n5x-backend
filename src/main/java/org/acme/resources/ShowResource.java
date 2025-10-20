@@ -42,4 +42,11 @@ public class ShowResource {
     public List<Season> getSeasonsByShowId(@PathParam("id") UUID id) {
         return seasonRepository.findByShowId(id);
     }
+    
+    @GET
+    @RolesAllowed("User")
+    @Path("/trending")
+    public List getTrendingShows() {
+        return showRepository.findTop10Shows();
+    }
 }

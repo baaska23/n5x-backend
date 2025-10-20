@@ -1,6 +1,7 @@
 package org.acme.entities;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -10,6 +11,7 @@ import java.util.UUID;
 public class Payment {
     @Id
     @GeneratedValue
+    @UuidGenerator
     @Column(name = "payment_id", columnDefinition = "UUID")
     private UUID paymentId;
     
