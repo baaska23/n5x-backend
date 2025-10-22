@@ -8,6 +8,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.acme.dto.LikedContentDto;
 import org.acme.dto.MyListDto;
+import org.acme.dto.ProfileDto;
 import org.acme.entities.*;
 import org.acme.repositories.*;
 
@@ -69,7 +70,6 @@ public class ProfileResource {
         return newProfile;
     }
     
-    //not working properly
     @PATCH
     @RolesAllowed("User")
     @Path("/{id}")
@@ -94,9 +94,21 @@ public class ProfileResource {
     
     @DELETE
     @RolesAllowed("User")
-    @Path("/{id}")
-    public boolean deleteProfileByUserId(@PathParam("id") UUID id) {
-        return profileRepository.deleteById(id);
+    @Path("/{userId}/{profileId}")
+    @Transactional
+    public ProfileDto deleteProfileByUserId(@PathParam("userId") UUID userId, @PathParam("profileId") UUID profileId) {
+        Profile deletingProfile = profileRepository.find("user.userId = ?1 and profileId = ?2", userId, profileId).firstResult();
+        
+        if (deletingProfile == null) {
+            throw new NotFoundException("Profile not found in MyList");
+        }
+        
+        profileRepository.delete(deletingProfile);
+        
+        UUID uid = deletingProfile.getUser().getUserId();
+        UUID pid = deletingProfile.getProfileId();
+        
+        return new ProfileDto(uid, pid, deletingProfile.getCreatedAt());
     }
     
     @GET

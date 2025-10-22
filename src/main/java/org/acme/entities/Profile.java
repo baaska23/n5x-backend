@@ -1,6 +1,7 @@
 package org.acme.entities;
 
 import jakarta.persistence.*;
+import jakarta.json.bind.annotation.JsonbTransient;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
@@ -29,10 +30,10 @@ public class Profile {
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
     
-    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<MyList> myList = new ArrayList<>();
     
-    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<LikedContent> likedContents = new ArrayList<>();
     
     public Profile() {}
@@ -77,6 +78,7 @@ public class Profile {
         this.createdAt = createdAt;
     }
     
+    @JsonbTransient
     public List<MyList> getMyList() {
         return myList;
     }
@@ -85,6 +87,7 @@ public class Profile {
         this.myList = myList;
     }
     
+    @JsonbTransient
     public List<LikedContent> getLikedContents() {
         return likedContents;
     }
