@@ -69,6 +69,7 @@ public class ProfileResource {
         return newProfile;
     }
     
+    //not working properly
     @PATCH
     @RolesAllowed("User")
     @Path("/{id}")
