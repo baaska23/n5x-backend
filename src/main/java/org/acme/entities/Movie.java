@@ -2,6 +2,8 @@ package org.acme.entities;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -34,6 +36,13 @@ public class Movie {
     
     @Column(name = "banner_url")
     private String bannerUrl;
+    
+    @Column(name = "likes_count")
+    private Integer likesCount;
+    
+    
+    @OneToMany(mappedBy = "movie", fetch = FetchType.LAZY)
+    private List<WatchHistory> watchHistories = new ArrayList<>();
     
     public Movie() {}
     
@@ -107,5 +116,13 @@ public class Movie {
     
     public void setBannerUrl(String bannerUrl) {
         this.bannerUrl = bannerUrl;
+    }
+    
+    public Integer getLikesCount() {
+        return likesCount;
+    }
+    
+    public void setLikesCount(Integer likesCount) {
+        this.likesCount = likesCount;
     }
 }

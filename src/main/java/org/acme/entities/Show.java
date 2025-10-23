@@ -34,6 +34,9 @@ public class Show {
     @Column(name = "banner_url")
     private String bannerUrl;
     
+    @Column(name = "likes_count")
+    private Integer likesCount;
+    
     @OneToMany(mappedBy = "show", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Season> seasons = new ArrayList<>();
     
@@ -101,5 +104,13 @@ public class Show {
     
     public void setBannerUrl(String bannerUrl) {
         this.bannerUrl = bannerUrl;
+    }
+    
+    public Integer getLikesCount() {
+        return likesCount;
+    }
+    
+    public void setLikesCount(Integer likesCount) {
+        this.likesCount = likesCount;
     }
 }

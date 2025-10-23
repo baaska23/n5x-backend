@@ -36,6 +36,9 @@ public class Profile {
     @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<LikedContent> likedContents = new ArrayList<>();
     
+    @OneToMany(mappedBy = "profile", fetch = FetchType.LAZY)
+    private List<WatchHistory> watchHistory = new ArrayList<>();
+    
     public Profile() {}
     
     public UUID getProfileId() {

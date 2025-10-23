@@ -2,6 +2,8 @@ package org.acme.entities;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -31,6 +33,9 @@ public class Episode {
     
     @Column(name = "episode_number", nullable = false)
     private Integer episodeNumber;
+    
+    @OneToMany(mappedBy = "episode", fetch = FetchType.LAZY)
+    private List<WatchHistory> watchHistories = new ArrayList<>();
     
     public Episode() {}
     
