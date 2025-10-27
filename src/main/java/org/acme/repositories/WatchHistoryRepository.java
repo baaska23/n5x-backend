@@ -3,7 +3,6 @@ package org.acme.repositories;
 import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 import org.acme.entities.WatchHistory;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
